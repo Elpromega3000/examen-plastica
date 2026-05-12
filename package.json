@@ -4,8 +4,8 @@
   "description": "Backend para registro de exámenes en Render",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "dependencies": {
     "body-parser": "^1.20.2",
