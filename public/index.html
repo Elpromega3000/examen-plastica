@@ -2,22 +2,20 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Examen Oficial - Vistas Técnicas</title>
+    <title>Examen Técnico - Sistema de Control</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <style>
         :root { --maroon: #a24d4d; --cream: #fdf6e3; }
-        body { background: #ccc; font-family: sans-serif; margin: 0; user-select: none; }
+        body { background: #bbb; font-family: sans-serif; margin: 0; user-select: none; }
         .card { background: var(--cream); border: 2px solid var(--maroon); border-radius: 12px; width: 1100px; padding: 25px; margin: 20px auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .header { text-align: center; border-bottom: 2px solid var(--maroon); margin-bottom: 20px; color: var(--maroon); font-weight: bold; }
+        .header { text-align: center; border-bottom: 2px solid var(--maroon); margin-bottom: 20px; color: var(--maroon); }
         
-        /* Layout con márgenes reales */
         .main-layout { display: flex; gap: 40px; height: 600px; }
         .panel-3d { flex: 1; background: white; border: 1px solid #999; position: relative; }
         .panel-draw { 
             flex: 1.2; background: white; border: 1px solid #999; display: grid;
-            grid-template-columns: 210px 50px 210px; /* 50px es el margen vacío */
-            grid-template-rows: 210px 50px 210px;
+            grid-template-columns: 210px 50px 210px; grid-template-rows: 210px 50px 210px;
             padding: 40px;
         }
 
@@ -32,27 +30,29 @@
 
         .btn { padding: 10px 20px; cursor: pointer; border: 1px solid var(--maroon); background: white; font-weight: bold; }
         .btn.active { background: var(--maroon); color: white; }
-        .btn-finish { background: #27ae60; color: white; border: none; padding: 15px 40px; float: right; border-radius: 5px; cursor: pointer; }
+        .btn-finish { background: #27ae60; color: white; border: none; padding: 15px 40px; float: right; border-radius: 5px; cursor: pointer; font-size: 1.1em; }
         
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--cream); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .hidden { display: none !important; }
     </style>
 </head>
-<body oncontextmenu="return false;"> <div id="login" class="overlay">
-    <h1 style="color: var(--maroon);">Examen de Plastica</h1>
-    <input type="text" id="name" placeholder="Nombre completo" style="padding:10px; width:250px; margin-bottom:10px;">
-    <select id="course" style="padding:10px; width:275px; margin-bottom:20px;">
+<body oncontextmenu="return false;">
+
+<div id="login" class="overlay">
+    <h1 style="color: var(--maroon);">Examen de Vistas - Curso 2023/24</h1>
+    <input type="text" id="name" placeholder="Nombre completo" style="padding:12px; width:280px; margin-bottom:10px;">
+    <select id="course" style="padding:12px; width:305px; margin-bottom:20px;">
         <option value="A">Grupo A</option>
         <option value="B">Grupo B</option>
         <option value="C">Grupo C</option>
     </select>
-    <button class="btn active" onclick="startExam()">ENTRAR AL EXAMEN</button>
+    <button class="btn active" onclick="startExam()">ACCEDER AL EXAMEN</button>
 </div>
 
 <div id="exam-container" class="card hidden">
     <div class="header">
         <h2 id="fig-title">Figura 1 de 5</h2>
-        <p id="user-info"></p>
+        <p id="user-info" style="font-weight: bold;"></p>
     </div>
 
     <div style="margin-bottom: 15px; display: flex; gap: 10px;">
@@ -62,59 +62,59 @@
     </div>
 
     <div class="main-layout">
-        <div id="canvas-3d" class="panel-3d"></div>
+        <div id="canvas-3d" class="panel-3d"><div style="position:absolute; bottom:10px; right:10px; font-weight:bold; color:var(--maroon)">ALZADO ➔</div></div>
         <div class="panel-draw">
             <div class="view-box" style="grid-column: 1; grid-row: 1;">
-                <span style="position:absolute; top:-20px; font-size:12px;">ALZADO</span>
-                <svg id="svg-alzado"></svg><div class="dots" id="dots-alzado"></div>
+                <span style="position:absolute; top:-20px; font-size:11px;">ALZADO</span>
+                <svg id="svg-alzado"></svg><div id="dots-alzado"></div>
             </div>
             <div class="view-box" style="grid-column: 3; grid-row: 1;">
-                <span style="position:absolute; top:-20px; font-size:12px;">PERFIL</span>
-                <svg id="svg-perfil"></svg><div class="dots" id="dots-perfil"></div>
+                <span style="position:absolute; top:-20px; font-size:11px;">PERFIL</span>
+                <svg id="svg-perfil"></svg><div id="dots-perfil"></div>
             </div>
             <div class="view-box" style="grid-column: 1; grid-row: 3;">
-                <span style="position:absolute; top:-20px; font-size:12px;">PLANTA</span>
-                <svg id="svg-planta"></svg><div class="dots" id="dots-planta"></div>
+                <span style="position:absolute; top:-20px; font-size:11px;">PLANTA</span>
+                <svg id="svg-planta"></svg><div id="dots-planta"></div>
             </div>
         </div>
     </div>
-    <button class="btn-finish" onclick="nextFig()">Siguiente Figura ➔</button>
+    <button class="btn-finish" onclick="saveAndNext()">Enviar Figura ➔</button>
 </div>
 
 <div id="final" class="overlay hidden">
     <h1 style="color: var(--maroon);">Examen Finalizado</h1>
-    <div id="grade-display" style="font-size: 80px; font-weight: bold; color: #27ae60;">--</div>
-    <div style="background: #fdf6e3; border: 2px solid #a24d4d; padding: 20px; text-align: center; max-width: 500px;">
-        <p><b>ATENCIÓN:</b> No cierres esta pestaña bajo ningún concepto.</p>
-        <p>Avisa a tu profesor para que registre la nota en el acta.</p>
+    <div id="grade-display" style="font-size: 100px; font-weight: bold; margin: 20px;">0.0</div>
+    <div style="background: white; border: 2px solid var(--maroon); padding: 30px; text-align: center;">
+        <p><b>¡ATENCIÓN!</b> No cierres esta pestaña ni refresques la página.</p>
+        <p>Avisa a tu profesor para que verifique tu nota en pantalla.</p>
     </div>
 </div>
 
 <script>
-    // BLOQUEO DE INSPECCIÓN (F12, Ctrl+Shift+I, etc)
+    // BLOQUEO DE TECLAS DE INSPECCIÓN
     document.onkeydown = (e) => {
         if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74))) return false;
     };
 
     let currentIdx = 0;
+    let totalScore = 0;
+    let lines = { alzado: [], perfil: [], planta: [] };
     let isHidden = false;
     let selectedDot = null;
-    let lines = { alzado: [], perfil: [], planta: [] };
-    
-    // FIGURAS MARCADAS EN ROJO 
+
+    // DEFINICIÓN DE LAS 5 FIGURAS (Cubos y sus aristas necesarias para corrección)
     const FIGURAS = [
-        { id: 1, cubos: [[0,0,0],[1,0,0],[2,0,0],[2,1,0],[2,2,0],[2,0,1],[2,0,2]] }, // Pieza en L
-        { id: 2, cubos: [[0,0,0],[1,0,0],[2,0,0],[0,1,0],[1,1,0],[2,1,0],[0,2,0],[2,2,0]] }, // Puente
-        { id: 3, cubos: [[0,0,0],[1,0,0],[2,0,0],[0,1,0],[2,1,0],[0,2,0],[1,2,0],[2,2,0]] }, // Hueco central
-        { id: 4, cubos: [[0,0,0],[1,0,0],[2,0,0],[0,1,0],[1,1,0],[0,2,0]] }, // Escalones
-        { id: 5, cubos: [[0,0,0],[2,0,0],[0,1,0],[2,1,0],[0,2,0],[1,2,0],[2,2,0]] }  // U invertida
+        { id: 1, cubos: [[0,0,0],[1,0,0],[2,0,0],[2,1,0],[2,2,0],[2,0,1],[2,0,2]], sol: 12 }, // La L
+        { id: 2, cubos: [[0,0,0],[1,0,0],[2,0,0],[0,1,0],[1,1,0],[2,1,0],[0,2,0],[2,2,0]], sol: 15 }, // El Puente
+        { id: 3, cubos: [[0,0,0],[1,0,0],[2,0,0],[0,1,0],[2,1,0],[0,2,0],[1,2,0],[2,2,0]], sol: 14 }, // Hueco central
+        { id: 4, cubos: [[0,0,0],[1,0,0],[2,0,0],[0,1,0],[1,1,0],[0,2,0]], sol: 10 }, // Escalones
+        { id: 5, cubos: [[0,0,0],[2,0,0],[0,1,0],[2,1,0],[0,2,0],[1,2,0],[2,2,0]], sol: 16 }  // U invertida
     ];
 
     function startExam() {
         const name = document.getElementById('name').value;
-        const course = document.getElementById('course').value;
         if(!name) return alert("Escribe tu nombre");
-        document.getElementById('user-info').innerText = `Alumno: ${name} | Curso: ${course}`;
+        document.getElementById('user-info').innerText = `Alumno: ${name} | Grupo: ${document.getElementById('course').value}`;
         document.getElementById('login').classList.add('hidden');
         document.getElementById('exam-container').classList.remove('hidden');
         init3D();
@@ -128,9 +128,7 @@
             for(let y=0; y<=3; y++) {
                 for(let x=0; x<=3; x++) {
                     const d = document.createElement('div');
-                    d.className = "dot";
-                    d.style.left = (x * 70) + "px";
-                    d.style.top = (y * 70) + "px";
+                    d.className = "dot"; d.style.left = (x*70)+"px"; d.style.top = (y*70)+"px";
                     d.onclick = () => handleDot(v, x*70, y*70, d);
                     container.appendChild(d);
                 }
@@ -141,13 +139,11 @@
     function handleDot(view, x, y, el) {
         if(!selectedDot || selectedDot.view !== view) {
             if(selectedDot) selectedDot.el.classList.remove('selected');
-            selectedDot = {view, x, y, el};
-            el.classList.add('selected');
+            selectedDot = {view, x, y, el}; el.classList.add('selected');
         } else {
-            lines[view].push({x1: selectedDot.x, y1: selectedDot.y, x2: x, y2: y, hidden: isHidden});
+            lines[view].push({x1: selectedDot.x, y1: selectedDot.y, x2: x, y2: y, h: isHidden});
             drawLines(view);
-            selectedDot.el.classList.remove('selected');
-            selectedDot = null;
+            selectedDot.el.classList.remove('selected'); selectedDot = null;
         }
     }
 
@@ -158,12 +154,24 @@
             const nl = document.createElementNS("http://www.w3.org/2000/svg", "line");
             nl.setAttribute("x1", l.x1); nl.setAttribute("y1", l.y1);
             nl.setAttribute("x2", l.x2); nl.setAttribute("y2", l.y2);
-            if(l.hidden) nl.classList.add('hidden-line');
+            if(l.h) nl.classList.add('hidden-line');
             svg.appendChild(nl);
         });
     }
 
-    function nextFig() {
+    function saveAndNext() {
+        // LÓGICA DE CORRECCIÓN: Compara cantidad de aristas vs solución necesaria
+        let figLines = lines.alzado.length + lines.perfil.length + lines.planta.length;
+        let target = FIGURAS[currentIdx].sol;
+        
+        // Si el alumno pone entre el 80% y 120% de las aristas, suma puntos. 
+        // Si pone solo 1 o 2 líneas, suma casi 0.
+        if(figLines >= target * 0.8 && figLines <= target * 1.3) {
+            totalScore += 2; // Máxima puntuación por figura
+        } else if (figLines > 2) {
+            totalScore += 0.5; // Puntuación mínima si al menos lo intentó
+        }
+
         currentIdx++;
         if(currentIdx < FIGURAS.length) {
             lines = { alzado: [], perfil: [], planta: [] };
@@ -171,35 +179,25 @@
             document.getElementById('fig-title').innerText = `Figura ${currentIdx + 1} de 5`;
             update3D();
         } else {
-            finish();
+            document.getElementById('exam-container').classList.add('hidden');
+            document.getElementById('final').classList.remove('hidden');
+            document.getElementById('grade-display').innerText = totalScore.toFixed(1);
         }
     }
 
-    function finish() {
-        document.getElementById('exam-container').classList.add('hidden');
-        document.getElementById('final').classList.remove('hidden');
-        // Cálculo de nota simulado (puedes ajustarlo)
-        const finalGrade = (Math.random() * (10 - 7) + 7).toFixed(1);
-        document.getElementById('grade-display').innerText = finalGrade;
-    }
-
-    // LÓGICA THREE.JS (Simplificada para el ejemplo)
+    // THREE.JS
     let scene, camera, renderer, group;
     function init3D() {
-        scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xffffff);
-        camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
-        camera.position.set(5, 5, 5);
+        scene = new THREE.Scene(); scene.background = new THREE.Color(0xffffff);
+        camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000); camera.position.set(5, 5, 5);
         renderer = new THREE.WebGLRenderer({antialias: true});
         const container = document.getElementById('canvas-3d');
         renderer.setSize(container.clientWidth, container.clientHeight);
         container.appendChild(renderer.domElement);
         new THREE.OrbitControls(camera, renderer.domElement);
-        scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-        update3D();
-        animate();
+        scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+        update3D(); animate();
     }
-
     function update3D() {
         if(group) scene.remove(group);
         group = new THREE.Group();
@@ -210,7 +208,6 @@
         });
         scene.add(group);
     }
-
     function animate() { requestAnimationFrame(animate); renderer.render(scene, camera); }
     function setMode(h) { isHidden = h; document.getElementById('m1').classList.toggle('active', !h); document.getElementById('m2').classList.toggle('active', h); }
     function undo() { for(let v in lines) if(lines[v].length > 0) { lines[v].pop(); drawLines(v); break; } }
