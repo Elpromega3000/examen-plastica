@@ -1,10 +1,11 @@
 {
-  "name": "examen-plastica",
+  "name": "examen-plastica-backend",
   "version": "1.0.0",
-  "description": "Backend",
+  "description": "Backend para registro de exámenes en Render",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "dependencies": {
     "body-parser": "^1.20.2",
